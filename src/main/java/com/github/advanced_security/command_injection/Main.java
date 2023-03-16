@@ -62,6 +62,26 @@ public class Main {
             //     user_input_target_file_name
             // );
 
+            // 6. direct use of Runtime.exec() with supposed user input
+            System.out.println("6");
+            String destination = " foo | rm foo"; // ineffective attempt to do command injection in a non 0th argument of exec()
+
+            String[] commandArray = new String[4];
+            commandArray[0] = "/bin/echo";
+            commandArray[1] = "/some/absolute/path";
+            commandArray[2] = "/another/absolute/path";
+            commandArray[3] = destination;
+            System.out.println("Running: " + commandArray[0] + " \"" + String.join("\" \"", Arrays.copyOfRange(commandArray, 1, commandArray.length)) + '"');
+            Process proc = Runtime.getRuntime().exec(
+                commandArray
+            );
+            printOutput(proc);
+
+            // show that foo is still there, it hasn't been removed
+            System.out.println("Foo is still there: ");
+            run(
+                new String[] {"ls", "-l", "foo"}
+            );
         } catch (Exception e) {
             System.err.println("ERROR: " + e.getMessage());
         }
